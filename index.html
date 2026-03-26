@@ -591,7 +591,7 @@
     <h3>Four levers to move the needle</h3>
     <p>The data above strongly points to Promotions tab classification as the primary cause — structural, not content-specific. Google doesn't publish its classification logic, so this is a well-supported inference rather than a certainty. The Postmaster Tools setup in Phase 2 will either confirm it or surface a different issue. Either way, these four changes are the right starting point — three are template changes, one is a sending configuration change:</p>
     <ol>
-      <li><strong>Eliminate the boilerplate.</strong> Iterable's Drag and Drop editor produces ~135KB of redundant table nesting and duplicated inline styles. Rewriting in clean MJML (Mailjet Markup Language, an email-specific templating framework) brings compiled HTML to 74KB — below Gmail's clip threshold and with far less classifier signal.</li>
+      <li><strong>Leave the Drag and Drop builder.</strong> Iterable's native editor outputs ~135KB of redundant table nesting and duplicated inline styles — a byproduct of how visual builders generate HTML. Clean hand-authored MJML brings that to 74KB, well under Gmail's clip threshold and with far less classifier signal. But file size is only part of it: the builder is also the constraint that makes every other fix temporary. A template assembled by hand in the Iterable UI can drift back at any time. Leaving it is the one change that makes everything else stick.</li>
       <li><strong>Add a reply prompt.</strong> There is no reply prompt anywhere in the current template. Reply rate is the single strongest engagement signal Gmail uses to reclassify emails out of Promotions.</li>
       <li><strong>Add a forward button.</strong> Iterable has no native forward feature. A <code>mailto:</code>-based forward button costs nothing to send and registers as an engagement signal.</li>
       <li><strong>Fix the From address.</strong> Reply rate is only useful if replies actually reach someone. Right now VB Daily sends from a no-reply address, which suppresses replies before Gmail even sees them. Two options: route sends through a writer's actual email address (strongest signal, replies go directly to the writer), or open a monitored reply inbox (e.g. <code>daily@venturebeat.com</code>) that someone checks. Either works — the key is that replies land somewhere real. This is an Iterable sending configuration change, not a template change, but it's the highest-leverage move on the list.</li>
@@ -606,7 +606,7 @@
 
   <div class="content">
     <h3>Redesigned MJML template</h3>
-    <p>Complete rebuild of the VB Daily email in MJML (Mailjet Markup Language, an email-specific templating framework). Production-ready, tested against the Iterable pipeline.</p>
+    <p>Complete rebuild of the VB Daily email in MJML — built outside Iterable's native editor entirely. That's the only way to produce clean, controlled HTML that doesn't regress between sends. Production-ready, tested against the Iterable pipeline.</p>
 
     <!-- Hero template demo -->
     <div class="demo-container" id="demo-hero">
@@ -849,7 +849,7 @@
   </div>
 
   <div class="content">
-    <p class="lead">The template built in Phase 1 still requires manual assembly in Iterable's Drag and Drop editor each send. Phase 2 replaces that entirely with an automated pipeline triggered by editorial approval.</p>
+    <p class="lead">Phase 1 gets VB Daily out of Iterable's Drag and Drop editor at the template level. Phase 2 removes it from the production workflow entirely — replacing manual assembly with an automated pipeline triggered by editorial approval.</p>
     <p>Once Karyne approves the edition in the Google Doc, the full production workflow runs from a single terminal session — no CMS, no copy-paste, no early handoff.</p>
 
     <div class="pipeline">Karyne approves → export → <code>vb-daily pull-ads</code> → <code>vb-daily build</code> → <code>vb-daily preview</code> → <code>vb-daily push</code> → live in Iterable</div>
@@ -1015,7 +1015,7 @@
         <h4>Phase 2 — Automated pipeline + optimization setup</h4>
       </div>
       <div class="phase-body">
-        <p>Replace the Drag and Drop workflow. Connect the build pipeline to Iterable's API. Set up deliverability tracking.</p>
+        <p>This phase completes the transition. Phase 1 replaces the builder at the template level — Phase 2 removes it from the production workflow. From this point forward, nothing in Iterable is assembled by hand.</p>
         <p><strong>Deliverables:</strong></p>
         <ul>
           <li>CLI toolchain: <code style="background:#f0f0f0;padding:2px 6px;border-radius:3px;font-size:13px;">vb-daily build</code>, <code style="background:#f0f0f0;padding:2px 6px;border-radius:3px;font-size:13px;">vb-daily preview</code>, <code style="background:#f0f0f0;padding:2px 6px;border-radius:3px;font-size:13px;">vb-daily push</code></li>
@@ -1029,13 +1029,13 @@
         <p><strong>What it fixes:</strong></p>
         <ul>
           <li>Eliminates the day-before content handoff — finalize by EOD Pacific, ship same cycle</li>
-          <li>Eliminates formatting drift from Drag and Drop editing</li>
+          <li>Eliminates formatting drift — every edition compiled from the same source, not rebuilt by hand in the Iterable UI</li>
           <li>Hard file size gate at compile time — 102KB limit enforced before every send, can't regress</li>
           <li>Pre-send link validation — dead links caught programmatically before subscribers see them</li>
           <li>True open rate — Apple Mail Privacy Protection auto-opens (~49% of reported opens) filtered out, leaving a real human engagement baseline</li>
           <li>Position-instrumented link tracking — clicks normalized by slot position, making content performance analysis possible for the first time</li>
           <li>Measurable data on whether template changes move the Gmail open rate</li>
-          <li>Foundation for further optimization (SparkLoop, Brand Affinity)</li>
+          <li>Foundation for further optimization (A/B testing, Brand Affinity)</li>
         </ul>
       </div>
       <div class="phase-meta">
@@ -1117,7 +1117,6 @@
     <h3>What this doesn't cover</h3>
     <ul>
       <li>Sending domain/IP reputation remediation (if Postmaster Tools reveals a reputation issue)</li>
-      <li>SparkLoop or referral program integration</li>
       <li>Iterable campaign automation (triggered sends, segmentation)</li>
       <li>Content strategy beyond A/B test setup</li>
     </ul>
