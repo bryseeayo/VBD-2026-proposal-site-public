@@ -842,6 +842,46 @@
     </div>
   </div>
 
+  <!-- ════════ DATA VIZ SHOWCASE ════════ -->
+  <div class="content-gray">
+    <h3>Data visualization components</h3>
+    <p>Story type drives the format: a funding story gets a bar chart, a benchmark story gets a scorecard, a market comparison gets a table. Pure HTML — no images, renders in every client including Gmail, Outlook, and Apple Mail. 12 formats built from recent VB Daily editions.</p>
+    <div class="demo-container" id="demo-viz">
+      <div class="demo-toolbar">
+        <label>Mode</label>
+        <button class="tb-btn" onclick="setVizMode('light',this)" id="viz-btn-light">Light</button>
+        <button class="tb-btn active" onclick="setVizMode('dark',this)" id="viz-btn-dark">Dark</button>
+        <div class="tb-divider"></div>
+        <label>Viewport</label>
+        <button class="tb-btn active" onclick="setDemoWidth('viz',600,this)" data-width="600">Desktop</button>
+        <button class="tb-btn" onclick="setDemoWidth('viz',375,this)" data-width="375">Mobile</button>
+        <span class="tb-size" id="viz-size">600px</span>
+      </div>
+      <div class="demo-frame-wrap" id="viz-wrap">
+        <div class="demo-frame-inner" id="viz-inner" style="width:600px;">
+          <iframe id="viz-frame" src="demos/data-viz-showcase.html" sandbox="allow-same-origin allow-scripts allow-popups" style="height:3200px;" data-passthrough="true"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  function setVizMode(mode, btn) {
+    var frame = document.getElementById('viz-frame');
+    var btns = document.querySelectorAll('#demo-viz .tb-btn');
+    btns.forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    try {
+      var doc = frame.contentDocument;
+      if (!doc) return;
+      // showcase defaults to dark; light-mode class = light
+      var isLight = doc.body.classList.contains('light-mode');
+      if (mode === 'light' && !isLight) doc.getElementById('modeBtn').click();
+      if (mode === 'dark' && isLight) doc.getElementById('modeBtn').click();
+    } catch(e) {}
+  }
+  </script>
+
   <!-- ════════ PROPOSED PIPELINE ════════ -->
   <div class="section-header">
     <div class="section-num">Section 03</div>
