@@ -591,7 +591,7 @@
     <h3>Four levers to move the needle</h3>
     <p>The data above strongly points to Promotions tab classification as the primary cause — structural, not content-specific. Google doesn't publish its classification logic, so this is a well-supported inference rather than a certainty. The Postmaster Tools setup in Phase 2 will either confirm it or surface a different issue. Either way, these four changes are the right starting point — three are template changes, one is a sending configuration change:</p>
     <ol>
-      <li><strong>Leave the Drag and Drop builder.</strong> Iterable's native editor outputs ~135KB of redundant table nesting and duplicated inline styles — a byproduct of how visual builders generate HTML. Clean hand-authored MJML brings that to 74KB, well under Gmail's clip threshold and with far less classifier signal. But file size is only part of it: the builder is also the constraint that makes every other fix temporary. A template assembled by hand in the Iterable UI can drift back at any time. Leaving it is the one change that makes everything else stick.</li>
+      <li><strong>Replace the manual HTML upload.</strong> The current workflow requires uploading a fresh compiled HTML template to Iterable's CMS for every send — producing ~135KB of template code that accumulates redundant table nesting and duplicated inline styles over time. Clean hand-authored MJML compiled fresh each send brings that to 74KB, well under Gmail's clip threshold and with far less classifier signal. But file size is only part of it: the manual upload step is also the constraint that makes every other fix temporary. HTML that passes through a manual process can drift back at any time. Automating it is the one change that makes everything else stick.</li>
       <li><strong>Add a reply prompt.</strong> There is no reply prompt anywhere in the current template. Reply rate is the single strongest engagement signal Gmail uses to reclassify emails out of Promotions.</li>
       <li><strong>Add a forward button.</strong> Iterable has no native forward feature. A <code>mailto:</code>-based forward button costs nothing to send and registers as an engagement signal.</li>
       <li><strong>Fix the From address.</strong> Reply rate is only useful if replies actually reach someone. Right now VB Daily sends from a no-reply address, which suppresses replies before Gmail even sees them. Two options: route sends through a writer's actual email address (strongest signal, replies go directly to the writer), or open a monitored reply inbox (e.g. <code>daily@venturebeat.com</code>) that someone checks. Either works — the key is that replies land somewhere real. This is an Iterable sending configuration change, not a template change, but it's the highest-leverage move on the list.</li>
@@ -642,7 +642,7 @@
 
     <p><strong>Template improvements:</strong></p>
     <ul>
-      <li><strong>74KB compiled HTML</strong> vs ~135KB current — the 61KB difference is Drag and Drop boilerplate removed, not content trimmed. Gmail clips rendered HTML around 102KB; the current template reliably hits that threshold every send</li>
+      <li><strong>74KB compiled HTML</strong> vs ~135KB current — the 61KB difference is accumulated template bloat removed, not content trimmed. Gmail clips rendered HTML around 102KB; the current template reliably hits that threshold every send</li>
       <li>Mobile-first build — single-column stack, touch-sized tap targets, responsive images. Designed for the 60%+ of opens that happen on phones</li>
       <li>Reply prompt above the fold, right after the intro</li>
       <li>Forward-to-colleague button (native mailto: — Iterable has no built-in forward feature)</li>
@@ -849,7 +849,7 @@
   </div>
 
   <div class="content">
-    <p class="lead">Phase 1 gets VB Daily out of Iterable's Drag and Drop editor at the template level. Phase 2 removes it from the production workflow entirely — replacing manual assembly with an automated pipeline triggered by editorial approval.</p>
+    <p class="lead">Phase 1 replaces the manually-uploaded HTML template with a clean, pipeline-compiled version. Phase 2 automates the upload itself — removing the manual Iterable CMS step from the production workflow entirely and replacing it with an automated pipeline triggered by editorial approval.</p>
     <p>Once Karyne approves the edition in the Google Doc, the full production workflow runs from a single terminal session — no CMS, no copy-paste, no early handoff.</p>
 
     <div class="pipeline">Karyne approves → export → <code>vb-daily pull-ads</code> → <code>vb-daily build</code> → <code>vb-daily preview</code> → <code>vb-daily push</code> → live in Iterable</div>
@@ -865,7 +865,7 @@
     <hr class="divider">
 
     <h3>Feature → Benefit</h3>
-    <p style="font-size:13px; color:#666; margin-bottom:24px;">None of these capabilities exist in the drag-and-drop workflow. They require owning the full HTML pipeline — compile, push, and report via API. Each one is a byproduct of replacing manual assembly, not an add-on to it.</p>
+    <p style="font-size:13px; color:#666; margin-bottom:24px;">None of these capabilities exist in the current workflow. They require owning the full HTML pipeline — compile, push, and report via API. Each one is a byproduct of replacing the manual upload step, not an add-on to it.</p>
 
     <h4 style="font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#CC2200; margin-bottom:12px; margin-top:0;">At compile time</h4>
 
@@ -962,7 +962,7 @@
       <tbody>
         <tr style="border-bottom:1px solid #f0f0f0;">
           <td style="padding:10px 12px 10px 0; vertical-align:top; font-weight:600;">Statistically tracked A/B tests</td>
-          <td style="padding:10px 0; vertical-align:top; color:#333;">Pipeline enforces consistent experiment structure across every test send — same metadata, same cohort definitions, same logging. Ad hoc A/B tests in drag-and-drop produce results that can't be trusted because send conditions vary. Structured tests accumulate comparable data points.</td>
+          <td style="padding:10px 0; vertical-align:top; color:#333;">Pipeline enforces consistent experiment structure across every test send — same metadata, same cohort definitions, same logging. Ad hoc A/B tests with manually uploaded templates produce results that can't be trusted because send conditions vary. Structured tests accumulate comparable data points.</td>
         </tr>
         <tr>
           <td style="padding:10px 12px 10px 0; vertical-align:top; font-weight:600;">Content performance by story type</td>
@@ -998,7 +998,7 @@
         </ul>
         <p><strong>What it fixes:</strong></p>
         <ul>
-          <li>Eliminates Drag and Drop boilerplate — 74KB compiled vs ~135KB current, comfortably under Gmail's ~102KB clip threshold</li>
+          <li>Eliminates accumulated template bloat — 74KB compiled vs ~135KB current, comfortably under Gmail's ~102KB clip threshold</li>
           <li>Reply prompt above the fold (strongest Promotions tab signal — most effective paired with a monitored From address)</li>
           <li>Forward button (engagement signal)</li>
           <li>Clean hand-written MJML — no redundant table nesting or duplicated inline styles that flag Gmail's promotional classifier</li>
@@ -1055,7 +1055,7 @@
           <li>MJML template build matching VB's updated brand identity</li>
           <li>Consistent design language: typography, color, layout, dark mode, mobile-first responsive</li>
           <li>Reply prompts and forward buttons adapted to each newsletter's voice</li>
-          <li>Compiled HTML well under Gmail's ~102KB clip threshold — no Drag and Drop boilerplate</li>
+          <li>Compiled HTML well under Gmail's ~102KB clip threshold — no accumulated template bloat</li>
           <li>Build pipeline extended to support the newsletter</li>
           <li>Iterable integration and proof send</li>
         </ul>
@@ -1070,12 +1070,12 @@
         <h4>Phase 4 — Ongoing daily production</h4>
       </div>
       <div class="phase-body">
-        <p>The pipeline built in Phases 1 and 2 changes how production actually runs. Right now, the manual Drag and Drop assembly step in Iterable sits between editorial approval and send — content has to be finalized almost a full day early to give time for that step. That's the scheduling constraint that tightens as Transform 2026 ramps up.</p>
+        <p>The pipeline built in Phases 1 and 2 changes how production actually runs. Right now, the manual HTML upload to Iterable's CMS sits between editorial approval and send — content has to be finalized almost a full day early to give time for that step. That's the scheduling constraint that tightens as Transform 2026 ramps up.</p>
         <p>With the pipeline, compiled send-ready HTML comes directly out of the editorial workflow. The manual CMS assembly step is eliminated. What currently requires a separate production handoff to build in Iterable happens automatically at compile time.</p>
 
         <p><strong>What the pipeline takes over from manual CMS production:</strong></p>
         <ul>
-          <li>HTML assembly — no more Drag and Drop rebuild each send</li>
+          <li>HTML assembly and upload — no more manual CMS update each send</li>
           <li>Ad creative fetch — pulls from Monday.com and Google Docs automatically</li>
           <li>Pre-send QA — file size check, link validation, rendering proof</li>
           <li>Iterable push — template upserted via API, subject line and preview text set automatically</li>
